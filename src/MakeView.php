@@ -49,9 +49,9 @@ class MakeView extends Command
 
         if($viewname == $extends) {
             if($bootstrap == "v3") {
-                $html = file_get_contents(__DIR__."/shells/boostrap.txt");
+                $html = file_get_contents(__DIR__."/shells/bootstrap.txt");
             } else if($bootstrap == "v4") {
-                $html = file_get_contents(__DIR__."/shells/boostrap4.txt");
+                $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
             } else {
                 $html = file_get_contents(__DIR__."/shells/raw.txt");
             }
