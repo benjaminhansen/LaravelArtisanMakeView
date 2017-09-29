@@ -10,7 +10,7 @@ class MakeView extends Command
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--extends=} {--bootstrap=}";
+    protected $signature = "make:view {viewname} {--extends=} {--bootstrap=} {--stub}";
 
     /**
      * The console command description.
@@ -39,6 +39,7 @@ class MakeView extends Command
         $viewname = $this->argument('viewname');
         $extends = env('BASE_VIEW', $this->option('extends'));
         $bootstrap = $this->option('bootstrap');
+        $stub = $this->option('stub');
 
         if($extends == "" || is_null($extends)) {
             $this->error("You have not configured or supplied a view to extend!\nYou must either configure BASE_VIEW in your .env file or use the \"--extends=base.view\" argument when creating a view!");
@@ -47,15 +48,7 @@ class MakeView extends Command
 
         $dir = resource_path('views');
 
-        if($viewname == $extends) {
-            if($bootstrap == "v3") {
-                $html = file_get_contents(__DIR__."/shells/bootstrap.txt");
-            } else if($bootstrap == "v4") {
-                $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
-            } else {
-                $html = file_get_contents(__DIR__."/shells/raw.txt");
-            }
-
+        if(!is_null($stub)) {
             if(strpos($viewname, '.') !== false) {
                 $parts = explode(".", $viewname);
                 $count = count($parts);
@@ -73,60 +66,101 @@ class MakeView extends Command
 
                 if(!file_exists($dir."/".$viewfile)) {
                     touch($dir."/".$viewfile);
-                    file_put_contents($dir."/".$viewfile, $html);
-                    $this->info("View [$viewname] created successfully!");
+                    $this->info("Stub view [$viewname] created successfully!");
                 } else {
-                    $this->error("View [$viewname] already exists!");
+                    $this->error("Stub view [$viewname] already exists!");
                 }
             } else {
                 $viewfile = $viewname.".blade.php";
                 if(!file_exists($dir."/".$viewfile)) {
                     touch($dir."/".$viewfile);
-                    file_put_contents($dir."/".$viewfile, $html);
-                    $this->info("View [$viewname] created successfully!");
+                    $this->info("Stub view [$viewname] created successfully!");
                 } else {
-                    $this->error("View [$viewname] already exists!");
+                    $this->error("Stub view [$viewname] already exists!");
                 }
             }
         } else {
-            if(strpos($viewname, '.') !== false) {
-                $parts = explode(".", $viewname);
-                $count = count($parts);
+            if($viewname == $extends) {
+                if($bootstrap == "v3") {
+                    $html = file_get_contents(__DIR__."/shells/bootstrap.txt");
+                } else if($bootstrap == "v4") {
+                    $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
+                } else {
+                    $html = file_get_contents(__DIR__."/shells/raw.txt");
+                }
 
-                $viewfile = end($parts).".blade.php";
+                if(strpos($viewname, '.') !== false) {
+                    $parts = explode(".", $viewname);
+                    $count = count($parts);
 
-                for($i = 0; $i < $count-1; $i++) {
-                    $folder = $parts[$i];
-                    $dir .= "/".$folder;
+                    $viewfile = end($parts).".blade.php";
 
-                    if(!file_exists($dir)) {
-                        mkdir($dir);
+                    for($i = 0; $i < $count-1; $i++) {
+                        $folder = $parts[$i];
+                        $dir .= "/".$folder;
+
+                        if(!file_exists($dir)) {
+                            mkdir($dir);
+                        }
+                    }
+
+                    if(!file_exists($dir."/".$viewfile)) {
+                        touch($dir."/".$viewfile);
+                        file_put_contents($dir."/".$viewfile, $html);
+                        $this->info("View [$viewname] created successfully!");
+                    } else {
+                        $this->error("View [$viewname] already exists!");
+                    }
+                } else {
+                    $viewfile = $viewname.".blade.php";
+                    if(!file_exists($dir."/".$viewfile)) {
+                        touch($dir."/".$viewfile);
+                        file_put_contents($dir."/".$viewfile, $html);
+                        $this->info("View [$viewname] created successfully!");
+                    } else {
+                        $this->error("View [$viewname] already exists!");
                     }
                 }
-
-                if(!file_exists($dir."/".$viewfile)) {
-                    touch($dir."/".$viewfile);
-
-                    $content = file_get_contents(__DIR__."/shells/extends.txt");
-                    $content = str_replace("{{BASE_VIEW}}", $extends, $content);
-
-                    file_put_contents($dir."/".$viewfile, $content);
-                    $this->info("View [$viewname] created successfully!");
-                } else {
-                    $this->error("View [$viewname] already exists!");
-                }
             } else {
-                $viewfile = $viewname.".blade.php";
-                if(!file_exists($dir."/".$viewfile)) {
-                    touch($dir."/".$viewfile);
+                if(strpos($viewname, '.') !== false) {
+                    $parts = explode(".", $viewname);
+                    $count = count($parts);
 
-                    $content = file_get_contents(__DIR__."/shells/extends.txt");
-                    $content = str_replace("{{BASE_VIEW}}", $extends, $content);
+                    $viewfile = end($parts).".blade.php";
 
-                    file_put_contents($dir."/".$viewfile, $content);
-                    $this->info("View [$viewname] created successfully!");
+                    for($i = 0; $i < $count-1; $i++) {
+                        $folder = $parts[$i];
+                        $dir .= "/".$folder;
+
+                        if(!file_exists($dir)) {
+                            mkdir($dir);
+                        }
+                    }
+
+                    if(!file_exists($dir."/".$viewfile)) {
+                        touch($dir."/".$viewfile);
+
+                        $content = file_get_contents(__DIR__."/shells/extends.txt");
+                        $content = str_replace("{{BASE_VIEW}}", $extends, $content);
+
+                        file_put_contents($dir."/".$viewfile, $content);
+                        $this->info("View [$viewname] created successfully!");
+                    } else {
+                        $this->error("View [$viewname] already exists!");
+                    }
                 } else {
-                    $this->error("View [$viewname] already exists!");
+                    $viewfile = $viewname.".blade.php";
+                    if(!file_exists($dir."/".$viewfile)) {
+                        touch($dir."/".$viewfile);
+
+                        $content = file_get_contents(__DIR__."/shells/extends.txt");
+                        $content = str_replace("{{BASE_VIEW}}", $extends, $content);
+
+                        file_put_contents($dir."/".$viewfile, $content);
+                        $this->info("View [$viewname] created successfully!");
+                    } else {
+                        $this->error("View [$viewname] already exists!");
+                    }
                 }
             }
         }
