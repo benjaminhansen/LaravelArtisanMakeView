@@ -10,7 +10,7 @@ class MakeView extends Command
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--extends=} {--bootstrap=} {--stub}";
+    protected $signature = "make:view {viewname} {--extends=} {--bootstrap=} {--empty}";
 
     /**
      * The console command description.
@@ -39,7 +39,7 @@ class MakeView extends Command
         $viewname = $this->argument('viewname');
         $extends = env('BASE_VIEW', $this->option('extends'));
         $bootstrap = $this->option('bootstrap');
-        $stub = $this->option('stub');
+        $empty = $this->option('empty');
 
         if($extends == "" || is_null($extends)) {
             $this->error("You have not configured or supplied a view to extend!\nYou must either configure BASE_VIEW in your .env file or use the \"--extends=base.view\" argument when creating a view!");
@@ -48,7 +48,7 @@ class MakeView extends Command
 
         $dir = resource_path('views');
 
-        if(!is_null($stub)) {
+        if(!is_null($empty)) {
             if(strpos($viewname, '.') !== false) {
                 $parts = explode(".", $viewname);
                 $count = count($parts);
@@ -66,17 +66,17 @@ class MakeView extends Command
 
                 if(!file_exists($dir."/".$viewfile)) {
                     touch($dir."/".$viewfile);
-                    $this->info("Stub view [$viewname] created successfully!");
+                    $this->info("View [$viewname] created successfully!");
                 } else {
-                    $this->error("Stub view [$viewname] already exists!");
+                    $this->error("View [$viewname] already exists!");
                 }
             } else {
                 $viewfile = $viewname.".blade.php";
                 if(!file_exists($dir."/".$viewfile)) {
                     touch($dir."/".$viewfile);
-                    $this->info("Stub view [$viewname] created successfully!");
+                    $this->info("View [$viewname] created successfully!");
                 } else {
-                    $this->error("Stub view [$viewname] already exists!");
+                    $this->error("View [$viewname] already exists!");
                 }
             }
         } else {

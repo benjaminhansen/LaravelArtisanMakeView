@@ -11,10 +11,10 @@ Installation
 
 Usage
 
-<code>php artisan make:view view.name --extends=layouts.app --bootstrap=bs-version --stub</code>
+<code>php artisan make:view view.name --extends=layouts.app --bootstrap=bs-version --empty</code>
 
 - <code>extends</code> option is optional if you set <code>BASE_VIEW</code> in your project's .env file
 - <code>bootstrap</code> option is optional. Preconfigures the base view with Twitter Bootstrap CSS and JS
     - <code>--bootstrap=v3</code> or <code>--bootstrap=v4</code>
-- <code>stub</code> option is optional. Creates an empty view file with no layout extension.
-    - When using the <code>stub</code> option all other options are ignored.
+- <code>empty</code> option is optional. Creates an empty view file with no layout extension.
+    - When using the <code>empty</code> option all other options are ignored.
