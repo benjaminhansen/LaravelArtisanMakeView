@@ -48,7 +48,7 @@ class MakeView extends Command
 
         $dir = resource_path('views');
 
-        if(!is_null($empty)) {
+        if(!is_null($empty) && $empty != "") {
             if(strpos($viewname, '.') !== false) {
                 $parts = explode(".", $viewname);
                 $count = count($parts);
