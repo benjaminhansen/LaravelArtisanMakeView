@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>{{ $title }}</title>
+        <title>This is your blank layout/masterpage.</title>
     </head>
     <body>
         <p>This is your blank layout/masterpage.</p>

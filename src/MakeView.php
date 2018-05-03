@@ -37,12 +37,21 @@ class MakeView extends Command
     public function handle()
     {
         $viewname = $this->argument('viewname');
-        $extends = env('BASE_VIEW', $this->option('extends'));
+        $extends = $this->option('extends');
         $bootstrap = $this->option('bootstrap');
         $empty = $this->option('empty');
 
+        if(is_null($extends)) {
+            $extends = env('BASE_VIEW');
+        }
+
         if($extends == "" || is_null($extends)) {
             $this->error("You have not configured or supplied a view to extend!\nYou must either configure BASE_VIEW in your .env file or use the \"--extends=base.view\" argument when creating a view!");
+            return false;
+        }
+
+        if(!view()->exists($extends)) {
+            $this->error("Layout [$extends] does not exist!");
             return false;
         }
 
