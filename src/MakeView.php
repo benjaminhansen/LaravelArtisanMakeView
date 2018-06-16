@@ -50,11 +50,6 @@ class MakeView extends Command
             return false;
         }
 
-        if(!view()->exists($extends)) {
-            $this->error("Layout [$extends] does not exist!");
-            return false;
-        }
-
         $dir = resource_path('views');
 
         if(!is_null($empty) && $empty != "") {
