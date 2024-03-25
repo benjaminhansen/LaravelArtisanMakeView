@@ -2,9 +2,10 @@
 
 namespace LaravelMakeView\Providers;
 
+use Illuminate\Support\ServiceProvider;
 use LaravelMakeView\MakeView;
 
-class MakeViewProvider
+class MakeViewProvider extends ServiceProvider
 {
     public function boot()
     {
