@@ -10,7 +10,7 @@ class MakeView extends Command
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--extends=} {--bootstrap=} {--empty}";
+    protected $signature = "make:view {viewname} {--extends=} {--bootstrap=} {--empty} {--resourceful}";
 
     /**
      * The console command description.
@@ -40,36 +40,74 @@ class MakeView extends Command
         $extends = $this->option('extends') ?? env('BASE_VIEW');
         $bootstrap = $this->option('bootstrap');
         $empty = $this->option('empty');
+        $resourceful = $this->option('resourceful');
 
         $view_path = base_path('resources/views');
 
         // handle the actual file creation for the given blade view
         if(str_contains($viewname, '.')) {
-            // we are dealing with at least one folder (the string includes a ".")
-            $parts = explode(".", $viewname);
-            $count = count($parts);
+            if($resourceful) {
+                // we should create a view folder and resourceful view files inside (index, create, show, edit)
+                $resource_files = ['index.blade.php', 'create.blade.php', 'show.blade.php', 'edit.blade.php'];
 
-            // get the last element of the array, which is our blade view file
-            $blade_template = strtolower(end($parts));
-            $blade_file = "{$blade_template}.blade.php";
+                $parts = explode(".", $viewname);
+                $count = count($parts);
 
-            // loop over the entire array, except for the last element (which is the actual file)
-            // and create the necessary directories
-            for($i = 0; $i < $count-1; $i++) {
-                $folder = $parts[$i];
-                $view_path .= "/{$folder}";
+                for($i = 0; $i < $count; $i++) {
+                    $folder = $parts[$i];
+                    $view_path .= "/{$folder}";
 
-                if(!file_exists($view_path)) {
-                    mkdir($view_path);
+                    if(!file_exists($view_path)) {
+                        mkdir($view_path);
+                    }
                 }
-            }
 
-            $full_view_path = "{$view_path}/{$blade_file}";
-            if(!file_exists($full_view_path)) {
-                touch($full_view_path);
-            } else {
-                $this->error("View [$viewname] already exists!");
+                foreach($resource_files as $file) {
+                    $file_view_path = "{$view_path}/{$file}";
+                    touch($file_view_path);
+
+                    if($extends) {
+                        $content = file_get_contents(__DIR__."/shells/extends.txt");
+                        $content = str_replace("{{BASE_VIEW}}", $extends, $content);
+
+                        file_put_contents($file_view_path, $content);
+                    }
+                }
+
+                if($extends) {
+                    $this->info("Resourceful child views created at [$viewname]");
+                } else {
+                    $this->info("Resourceful views created at [$viewname]");
+                }
+
                 return;
+            } else {
+                // we are dealing with at least one folder (the string includes a ".")
+                $parts = explode(".", $viewname);
+                $count = count($parts);
+
+                // get the last element of the array, which is our blade view file
+                $blade_template = strtolower(end($parts));
+                $blade_file = "{$blade_template}.blade.php";
+
+                // loop over the entire array, except for the last element (which is the actual file)
+                // and create the necessary directories
+                for($i = 0; $i < $count-1; $i++) {
+                    $folder = $parts[$i];
+                    $view_path .= "/{$folder}";
+
+                    if(!file_exists($view_path)) {
+                        mkdir($view_path);
+                    }
+                }
+
+                $full_view_path = "{$view_path}/{$blade_file}";
+                if(!file_exists($full_view_path)) {
+                    touch($full_view_path);
+                } else {
+                    $this->error("View [$viewname] already exists!");
+                    return;
+                }
             }
         } else {
             // we are dealing with a single/top-level blade file
@@ -85,7 +123,7 @@ class MakeView extends Command
 
         if($empty || !$extends) {
             // if we are creating an empty view file, bail out here
-            $this->info("Empty view [$viewname] created successfully!");
+            $this->info("Empty view [$viewname] created");
             return;
         }
 
@@ -108,7 +146,7 @@ class MakeView extends Command
 
             file_put_contents($full_view_path, $html);
 
-            $this->info("Layout view [$viewname] created successfully!");
+            $this->info("Layout view [$viewname] created");
 
             return;
         }
@@ -119,6 +157,6 @@ class MakeView extends Command
 
         file_put_contents($full_view_path, $content);
 
-        $this->info("Child view [$viewname] created successfully!");
+        $this->info("Child view [$viewname] created");
     }
 }
