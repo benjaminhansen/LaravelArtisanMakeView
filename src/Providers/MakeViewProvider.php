@@ -13,7 +13,7 @@ class MakeViewProvider
         ]);
     }
 
-    public function isDeferred()
+    public static function isDeferred()
     {
         //
     }
