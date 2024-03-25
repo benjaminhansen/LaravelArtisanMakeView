@@ -1,6 +1,7 @@
 {
     "name": "benjaminhansen/laravel-artisan-make-view",
     "description": "Laravel Artisan command to create Blade views",
+    "license": "MIT",
     "authors": [
         {
             "name": "benjaminhansen",
