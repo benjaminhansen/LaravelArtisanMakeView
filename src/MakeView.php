@@ -59,8 +59,8 @@ class MakeView extends Command
                 $folder = $parts[$i];
                 $view_path .= "/{$folder}";
 
-                if(!file_exists($folder)) {
-                    mkdir($folder);
+                if(!file_exists($view_path)) {
+                    mkdir($view_path);
                 }
             }
 
