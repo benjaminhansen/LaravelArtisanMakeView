@@ -41,7 +41,7 @@ class MakeView extends Command
         $bootstrap = $this->option('bootstrap');
         $empty = $this->option('empty');
 
-        $view_path = resource_path('views');
+        $view_path = base_path('resources/views');
 
         // handle the actual file creation for the given blade view
         if(str_contains($viewname, '.')) {
@@ -64,7 +64,7 @@ class MakeView extends Command
                 }
             }
 
-            $full_view_path = "{$folder}/{$blade_file}";
+            $full_view_path = "{$view_path}/{$blade_file}";
             if(!file_exists($full_view_path)) {
                 touch($full_view_path);
             } else {
