@@ -12,4 +12,9 @@ class MakeViewProvider
             MakeView::class,
         ]);
     }
+
+    public function isDeferred()
+    {
+        //
+    }
 }
