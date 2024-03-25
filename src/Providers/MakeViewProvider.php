@@ -17,4 +17,9 @@ class MakeViewProvider
     {
         //
     }
+
+    public function register()
+    {
+        //
+    }
 }
