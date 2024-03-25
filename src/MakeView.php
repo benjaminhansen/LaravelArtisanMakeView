@@ -85,12 +85,18 @@ class MakeView extends Command
             }
         } else {
             if($viewname == $extends) {
-                if($bootstrap == "v3") {
-                    $html = file_get_contents(__DIR__."/shells/bootstrap.txt");
-                } else if($bootstrap == "v4") {
-                    $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
-                } else {
-                    $html = file_get_contents(__DIR__."/shells/raw.txt");
+                switch($bootstrap) {
+                    case "v3":
+                        $html = file_get_contents(__DIR__."/shells/bootstrap3.txt");
+                        break;
+                    case "v4":
+                        $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
+                        break;
+                    case "v5":
+                        $html = file_get_contents(__DIR__."/shells/bootstrap5.txt");
+                        break;
+                    default:
+                        $html = file_get_contents(__DIR__."/shells/raw.txt");
                 }
 
                 if(strpos($viewname, '.') !== false) {
