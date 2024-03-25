@@ -1,4 +1,4 @@
-# LaravelArtisanMakeView
+# Laravel Artisan Make View
 
 Command line utility to create views in Laravel.
 
