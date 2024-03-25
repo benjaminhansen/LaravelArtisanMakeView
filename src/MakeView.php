@@ -37,142 +37,93 @@ class MakeView extends Command
     public function handle()
     {
         $viewname = $this->argument('viewname');
-        $extends = $this->option('extends');
+        $extends = $this->option('extends') ?? env('BASE_VIEW');
         $bootstrap = $this->option('bootstrap');
         $empty = $this->option('empty');
-
-        if(is_null($extends)) {
-            $extends = env('BASE_VIEW');
-        }
 
         if($extends == "" || is_null($extends)) {
             $this->error("You have not configured or supplied a view to extend!\nYou must either configure BASE_VIEW in your .env file or use the \"--extends=base.view\" argument when creating a view!");
             return false;
         }
 
-        $dir = resource_path('views');
+        $view_path = resource_path('views');
+        $viewname = str_replace('..', '.', $viewname);
 
-        if(!is_null($empty) && $empty != "") {
-            if(strpos($viewname, '.') !== false) {
-                $parts = explode(".", $viewname);
-                $count = count($parts);
+        // handle the actual file creation for the given blade view
+        if(str_contains($viewname, '.')) {
+            // we are dealing with at least one folder (the string includes a ".")
+            $parts = explode(".", $viewname);
+            $count = count($parts);
 
-                $viewfile = end($parts).".blade.php";
+            // get the last element of the array, which is our blade view file
+            $blade_el = strtolower(end($parts));
+            $blade_file = "{$blade_el}.blade.php";
 
-                for($i = 0; $i < $count-1; $i++) {
-                    $folder = $parts[$i];
-                    $dir .= "/".$folder;
+            // loop over the entire array, except for the last element (which is the actual file)
+            // and create the necessary directories
+            for($i = 0; $i < $count-1; $i++) {
+                $folder = $parts[$i];
+                $view_path .= "/{$folder}";
 
-                    if(!file_exists($dir)) {
-                        mkdir($dir);
-                    }
+                if(!file_exists($folder)) {
+                    mkdir($folder);
                 }
+            }
 
-                if(!file_exists($dir."/".$viewfile)) {
-                    touch($dir."/".$viewfile);
-                    $this->info("View [$viewname] created successfully!");
-                } else {
-                    $this->error("View [$viewname] already exists!");
-                }
+            $full_view_path = "{$folder}/{$blade_file}";
+            if(!file_exists($full_view_path)) {
+                touch($full_view_path);
+                $this->info("View [$viewname] created successfully!");
             } else {
-                $viewfile = $viewname.".blade.php";
-                if(!file_exists($dir."/".$viewfile)) {
-                    touch($dir."/".$viewfile);
-                    $this->info("View [$viewname] created successfully!");
-                } else {
-                    $this->error("View [$viewname] already exists!");
-                }
+                $this->error("View [$viewname] already exists!");
             }
         } else {
-            if($viewname == $extends) {
-                switch($bootstrap) {
-                    case "v3":
-                        $html = file_get_contents(__DIR__."/shells/bootstrap3.txt");
-                        break;
-                    case "v4":
-                        $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
-                        break;
-                    case "v5":
-                        $html = file_get_contents(__DIR__."/shells/bootstrap5.txt");
-                        break;
-                    default:
-                        $html = file_get_contents(__DIR__."/shells/raw.txt");
-                }
-
-                if(strpos($viewname, '.') !== false) {
-                    $parts = explode(".", $viewname);
-                    $count = count($parts);
-
-                    $viewfile = end($parts).".blade.php";
-
-                    for($i = 0; $i < $count-1; $i++) {
-                        $folder = $parts[$i];
-                        $dir .= "/".$folder;
-
-                        if(!file_exists($dir)) {
-                            mkdir($dir);
-                        }
-                    }
-
-                    if(!file_exists($dir."/".$viewfile)) {
-                        touch($dir."/".$viewfile);
-                        file_put_contents($dir."/".$viewfile, $html);
-                        $this->info("View [$viewname] created successfully!");
-                    } else {
-                        $this->error("View [$viewname] already exists!");
-                    }
-                } else {
-                    $viewfile = $viewname.".blade.php";
-                    if(!file_exists($dir."/".$viewfile)) {
-                        touch($dir."/".$viewfile);
-                        file_put_contents($dir."/".$viewfile, $html);
-                        $this->info("View [$viewname] created successfully!");
-                    } else {
-                        $this->error("View [$viewname] already exists!");
-                    }
-                }
+            // we are dealing with a single/top-level blade file
+            $blade_file = "{$viewname}.blade.php";
+            $full_view_path = "{$view_path}/{$blade_file}";
+            if(!file_exists($full_view_path)) {
+                touch($full_view_path);
+                $this->info("Empty view [$viewname] created successfully!");
             } else {
-                if(strpos($viewname, '.') !== false) {
-                    $parts = explode(".", $viewname);
-                    $count = count($parts);
-
-                    $viewfile = end($parts).".blade.php";
-
-                    for($i = 0; $i < $count-1; $i++) {
-                        $folder = $parts[$i];
-                        $dir .= "/".$folder;
-
-                        if(!file_exists($dir)) {
-                            mkdir($dir);
-                        }
-                    }
-
-                    if(!file_exists($dir."/".$viewfile)) {
-                        touch($dir."/".$viewfile);
-
-                        $content = file_get_contents(__DIR__."/shells/extends.txt");
-                        $content = str_replace("{{BASE_VIEW}}", $extends, $content);
-
-                        file_put_contents($dir."/".$viewfile, $content);
-                        $this->info("View [$viewname] created successfully!");
-                    } else {
-                        $this->error("View [$viewname] already exists!");
-                    }
-                } else {
-                    $viewfile = $viewname.".blade.php";
-                    if(!file_exists($dir."/".$viewfile)) {
-                        touch($dir."/".$viewfile);
-
-                        $content = file_get_contents(__DIR__."/shells/extends.txt");
-                        $content = str_replace("{{BASE_VIEW}}", $extends, $content);
-
-                        file_put_contents($dir."/".$viewfile, $content);
-                        $this->info("View [$viewname] created successfully!");
-                    } else {
-                        $this->error("View [$viewname] already exists!");
-                    }
-                }
+                $this->error("View [$viewname] already exists!");
             }
         }
+
+        if($empty) {
+            // if we are creating an empty view file, bail out here
+            return;
+        }
+
+        // handle any extends or bootstrap logic
+        if($viewname == $extends) {
+            // we are creating a layout/masterpage, get the requested template and then bail out
+            switch($bootstrap) {
+                case "v3":
+                    $html = file_get_contents(__DIR__."/shells/bootstrap3.txt");
+                    break;
+                case "v4":
+                    $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
+                    break;
+                case "v5":
+                    $html = file_get_contents(__DIR__."/shells/bootstrap5.txt");
+                    break;
+                default:
+                    $html = file_get_contents(__DIR__."/shells/raw.txt");
+            }
+
+            file_put_contents($full_view_path, $html);
+
+            $this->info("Layout view [$viewname] created successfully!");
+
+            return;
+        }
+
+        // get the extends template and put the content in the file
+        $content = file_get_contents(__DIR__."/shells/extends.txt");
+        $content = str_replace("{{BASE_VIEW}}", $extends, $content);
+
+        file_put_contents($full_view_path, $content);
+
+        $this->info("Child view [$viewname] created successfully!");
     }
 }
