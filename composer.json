@@ -12,5 +12,12 @@
         "psr-4": {
             "LaravelMakeView\\": "src/"
         }
-    }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelMakeView\\Providers\\MakeViewProvider"
+            ]
+        }
+    },
 }
