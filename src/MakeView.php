@@ -42,7 +42,6 @@ class MakeView extends Command
         $empty = $this->option('empty');
 
         $view_path = resource_path('views');
-        $viewname = str_replace('..', '.', $viewname);
 
         // handle the actual file creation for the given blade view
         if(str_contains($viewname, '.')) {
@@ -51,8 +50,8 @@ class MakeView extends Command
             $count = count($parts);
 
             // get the last element of the array, which is our blade view file
-            $blade_el = strtolower(end($parts));
-            $blade_file = "{$blade_el}.blade.php";
+            $blade_template = strtolower(end($parts));
+            $blade_file = "{$blade_template}.blade.php";
 
             // loop over the entire array, except for the last element (which is the actual file)
             // and create the necessary directories
@@ -68,9 +67,9 @@ class MakeView extends Command
             $full_view_path = "{$folder}/{$blade_file}";
             if(!file_exists($full_view_path)) {
                 touch($full_view_path);
-                $this->info("View [$viewname] created successfully!");
             } else {
                 $this->error("View [$viewname] already exists!");
+                return;
             }
         } else {
             // we are dealing with a single/top-level blade file
@@ -78,14 +77,15 @@ class MakeView extends Command
             $full_view_path = "{$view_path}/{$blade_file}";
             if(!file_exists($full_view_path)) {
                 touch($full_view_path);
-                $this->info("Empty view [$viewname] created successfully!");
             } else {
                 $this->error("View [$viewname] already exists!");
+                return;
             }
         }
 
         if($empty || !$extends) {
             // if we are creating an empty view file, bail out here
+            $this->info("Empty view [$viewname] created successfully!");
             return;
         }
 
