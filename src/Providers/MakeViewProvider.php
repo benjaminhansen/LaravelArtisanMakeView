@@ -14,7 +14,7 @@ class MakeViewProvider extends ServiceProvider
         ]);
     }
 
-    public static function isDeferred()
+    public function isDeferred()
     {
         //
     }
