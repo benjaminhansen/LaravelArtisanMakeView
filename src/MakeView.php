@@ -41,11 +41,6 @@ class MakeView extends Command
         $bootstrap = $this->option('bootstrap');
         $empty = $this->option('empty');
 
-        if($extends == "" || is_null($extends)) {
-            $this->error("You have not configured or supplied a view to extend!\nYou must either configure BASE_VIEW in your .env file or use the \"--extends=base.view\" argument when creating a view!");
-            return false;
-        }
-
         $view_path = resource_path('views');
         $viewname = str_replace('..', '.', $viewname);
 
@@ -89,7 +84,7 @@ class MakeView extends Command
             }
         }
 
-        if($empty) {
+        if($empty || !$extends) {
             // if we are creating an empty view file, bail out here
             return;
         }
