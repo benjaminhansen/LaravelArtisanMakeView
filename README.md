@@ -21,7 +21,7 @@ Configuration < Laravel 5.5
     - If <code>BASE_VIEW</code> is set, but you use the <code>--extends</code> option, <code>--extends</code> takes precedence.
 
 - <code>bootstrap</code> is optional. Preconfigures the base view with Twitter Bootstrap CSS and JS
-    - <code>--bootstrap=v3</code> or <code>--bootstrap=v4</code>
+    - <code>--bootstrap=v3</code>, <code>--bootstrap=v4</code>, or <code>--bootstrap=v5</code>
 
 - <code>empty</code> option is optional. Creates an empty view file with no layout extension.
     - When using the <code>empty</code> option all other options are ignored.
