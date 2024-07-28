@@ -1,6 +1,7 @@
 <?php
 
-namespace LaravelMakeView;
+namespace BenjaminHansen\LaravelMakeView;
+
 use Illuminate\Console\Command;
 
 class MakeView extends Command
@@ -17,7 +18,7 @@ class MakeView extends Command
      *
      * @var string
      */
-    protected $description = 'Make a new Blade View';
+    protected $description = 'Make a new Blade View with configurable options';
 
     /**
      * Create a new command instance.
@@ -51,10 +52,11 @@ class MakeView extends Command
                 $resource_files = ['index.blade.php', 'create.blade.php', 'show.blade.php', 'edit.blade.php'];
 
                 $parts = explode(".", $viewname);
-                $count = count($parts);
 
-                for($i = 0; $i < $count; $i++) {
-                    $folder = $parts[$i];
+                foreach($parts as $folder) {
+                    $folder = strtolower($folder); // lowercase all folder names
+                    $folder = str_slug($folder); // slugify all folder names to make sure they are clean
+
                     $view_path .= "/{$folder}";
 
                     if(!file_exists($view_path)) {
@@ -64,7 +66,12 @@ class MakeView extends Command
 
                 foreach($resource_files as $file) {
                     $file_view_path = "{$view_path}/{$file}";
-                    touch($file_view_path);
+                    if(!file_exists($file_view_path)) {
+                        touch($file_view_path);
+                    } else {
+                        $this->error("View file [$file_view_path] already exists!");
+                        return;
+                    }
 
                     if($extends) {
                         $content = file_get_contents(__DIR__."/shells/extends.txt");
@@ -84,7 +91,6 @@ class MakeView extends Command
             } else {
                 // we are dealing with at least one folder (the string includes a ".")
                 $parts = explode(".", $viewname);
-                $count = count($parts);
 
                 // get the last element of the array, which is our blade view file
                 $blade_template = strtolower(end($parts));
@@ -92,8 +98,10 @@ class MakeView extends Command
 
                 // loop over the entire array, except for the last element (which is the actual file)
                 // and create the necessary directories
-                for($i = 0; $i < $count-1; $i++) {
-                    $folder = $parts[$i];
+                foreach($parts as $folder) {
+                    $folder = strtolower($folder); // lowercase all folder names
+                    $folder = str_slug($folder); // slugify all folder names to make sure they are clean
+
                     $view_path .= "/{$folder}";
 
                     if(!file_exists($view_path)) {

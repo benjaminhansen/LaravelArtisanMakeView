@@ -2,12 +2,14 @@
 
 Command line utility to create views in Laravel.
 
+!! Overrides Laravel's default <code>make:view</code> command.
+
 Requires >= Laravel 5.0
 
 <code>composer require benjaminhansen/laravel-artisan-make-view</code>
 
 Configuration < Laravel 5.5
-1. Open <code>app/Console/Kernel.php</code> and add <code>\LaravelMakeView\MakeView::class,</code> to the <code>protected $commands</code> array
+1. Open <code>app/Console/Kernel.php</code> and add <code>BenjaminHansen\LaravelMakeView\MakeView::class,</code> to the <code>protected $commands</code> array
 
 ##Usage
 

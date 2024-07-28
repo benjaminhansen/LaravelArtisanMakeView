@@ -11,13 +11,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "LaravelMakeView\\": "src/"
+            "BenjaminHansen\\LaravelMakeView\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelMakeView\\Providers\\MakeViewProvider"
+                "BenjaminHansen\\LaravelMakeView\\Providers\\MakeViewProvider"
             ]
         }
     }

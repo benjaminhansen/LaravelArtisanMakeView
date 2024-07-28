@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelMakeView\Providers;
+namespace BenjaminHansen\LaravelMakeView\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelMakeView\MakeView;
+use BenjaminHansen\LaravelMakeView\MakeView;
 
 class MakeViewProvider extends ServiceProvider
 {
