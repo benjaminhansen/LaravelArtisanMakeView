@@ -6,12 +6,14 @@ Command line utility to create views in Laravel.
 
 Requires >= Laravel 5.0
 
-<code>composer require benjaminhansen/laravel-artisan-make-view</code>
+```
+composer require benjaminhansen/laravel-artisan-make-view
+```
 
 Configuration < Laravel 5.5
-1. Open <code>app/Console/Kernel.php</code> and add <code>BenjaminHansen\LaravelMakeView\MakeView::class,</code> to the <code>protected $commands</code> array
+Open <code>app/Console/Kernel.php</code> and add <code>BenjaminHansen\LaravelMakeView\MakeView::class,</code> to the <code>protected $commands</code> array
 
-##Usage
+## Usage
 
 <code>php artisan make:view view.name --extends=layouts.app --bootstrap=bs-version --empty --resourceful</code>
 
