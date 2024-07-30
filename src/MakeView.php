@@ -13,7 +13,7 @@ class MakeView extends Command
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--extends=} {--bootstrap=} {--empty} {--resourceful}";
+    protected $signature = "make:view {viewname} {--e|extends=} {--bs|bootstrap=} {--E|empty} {--r|resourceful}";
 
     /**
      * The console command description.
