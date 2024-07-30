@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 
 class MakeView extends Command
 {
+    protected $deprecated_bootstrap_versions = ['v3'];
+
     /**
      * The name and signature of the console command.
      *
@@ -138,18 +140,15 @@ class MakeView extends Command
         // handle any extends or bootstrap logic
         if($viewname == $extends) {
             // we are creating a layout/masterpage, get the requested template and then bail out
-            switch($bootstrap) {
-                case "v3":
-                    $html = file_get_contents(__DIR__."/shells/bootstrap3.txt");
-                    break;
-                case "v4":
-                    $html = file_get_contents(__DIR__."/shells/bootstrap4.txt");
-                    break;
-                case "v5":
-                    $html = file_get_contents(__DIR__."/shells/bootstrap5.txt");
-                    break;
-                default:
-                    $html = file_get_contents(__DIR__."/shells/raw.txt");
+            $html = match($bootstrap) {
+                "v3" => file_get_contents(__DIR__."/shells/bootstrap3.txt"),
+                "v4" => file_get_contents(__DIR__."/shells/bootstrap4.txt"),
+                "v5" => file_get_contents(__DIR__."/shells/bootstrap5.txt"),
+                default => file_get_contents(__DIR__."/shells/raw.txt")
+            };
+
+            if($bootstrap && in_array($bootstrap, $this->deprecated_bootstrap_versions)) {
+                $this->warn("Bootstrap {$bootstrap} is deprecated, and will be removed soon. Please switch to a newer version as soon as possible.");
             }
 
             file_put_contents($full_view_path, $html);
