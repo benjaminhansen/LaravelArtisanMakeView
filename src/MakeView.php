@@ -123,14 +123,50 @@ class MakeView extends Command
                 }
             }
         } else {
-            // we are dealing with a single/top-level blade file
-            $blade_file = "{$viewname}.blade.php";
-            $full_view_path = "{$view_path}/{$blade_file}";
-            if(!file_exists($full_view_path)) {
-                touch($full_view_path);
-            } else {
-                $this->error("View [$viewname] already exists!");
+            if($resourceful) {
+                // we should create a view folder and resourceful view files inside (index, create, show, edit)
+                $resource_files = ['index.blade.php', 'create.blade.php', 'show.blade.php', 'edit.blade.php'];
+
+                $view_path .= "/{$viewname}";
+
+                if(!file_exists($view_path)) {
+                    mkdir($view_path);
+                }
+
+                foreach($resource_files as $file) {
+                    $file_view_path = "{$view_path}/{$file}";
+                    if(!file_exists($file_view_path)) {
+                        touch($file_view_path);
+                    } else {
+                        $this->error("View file [$file_view_path] already exists!");
+                        return;
+                    }
+
+                    if($extends) {
+                        $content = file_get_contents(__DIR__."/shells/extends.txt");
+                        $content = str_replace("{{BASE_VIEW}}", $extends, $content);
+
+                        file_put_contents($file_view_path, $content);
+                    }
+                }
+
+                if($extends) {
+                    $this->info("Resourceful child views created at [$viewname]");
+                } else {
+                    $this->info("Resourceful views created at [$viewname]");
+                }
+
                 return;
+            } else {
+                // we are dealing with a single/top-level blade file
+                $blade_file = "{$viewname}.blade.php";
+                $full_view_path = "{$view_path}/{$blade_file}";
+                if(!file_exists($full_view_path)) {
+                    touch($full_view_path);
+                } else {
+                    $this->error("View [$viewname] already exists!");
+                    return;
+                }
             }
         }
 
