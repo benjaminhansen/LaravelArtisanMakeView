@@ -98,6 +98,9 @@ class MakeView extends Command
                 $blade_template = strtolower(end($parts));
                 $blade_file = "{$blade_template}.blade.php";
 
+                // remove the last element from the array since it is our filename
+                array_pop($parts);
+
                 // loop over the entire array, except for the last element (which is the actual file)
                 // and create the necessary directories
                 foreach($parts as $folder) {

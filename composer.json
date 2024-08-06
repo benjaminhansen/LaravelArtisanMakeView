@@ -8,7 +8,9 @@
             "email": "bjhansen@benjaminhansen.net"
         }
     ],
-    "require": {},
+    "require": {
+        "laravel/helpers": "^1.7"
+    },
     "autoload": {
         "psr-4": {
             "BenjaminHansen\\LaravelMakeView\\": "src/"
