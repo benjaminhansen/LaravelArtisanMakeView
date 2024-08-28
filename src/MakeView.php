@@ -6,21 +6,19 @@ use Illuminate\Console\Command;
 
 class MakeView extends Command
 {
-    protected $deprecated_bootstrap_versions = ['v3'];
-
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--e|extends=} {--bs|bootstrap=} {--E|empty} {--r|resourceful}";
+    protected $signature = "make:view {viewname} {--extends=} {--uses=} {--empty} {--resourceful} {--suffix=}";
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Make a new Blade View with configurable options';
+    protected $description = 'Make a new Blade View with configurable options.';
 
     /**
      * Create a new command instance.
@@ -41,19 +39,20 @@ class MakeView extends Command
     {
         $viewname = $this->argument('viewname');
         $extends = $this->option('extends') ?? env('BASE_VIEW');
-        $bootstrap = $this->option('bootstrap');
+        $uses = $this->option('uses');
         $empty = $this->option('empty');
         $resourceful = $this->option('resourceful');
+        $suffix = $this->option('suffix') ?? 'blade.php';
 
         $view_path = base_path('resources/views');
 
         // handle the actual file creation for the given blade view
         if(str_contains($viewname, '.')) {
+            $parts = explode(".", $viewname);
+
             if($resourceful) {
                 // we should create a view folder and resourceful view files inside (index, create, show, edit)
-                $resource_files = ['index.blade.php', 'create.blade.php', 'show.blade.php', 'edit.blade.php'];
-
-                $parts = explode(".", $viewname);
+                $resource_files = ["index.{$suffix}", "create.{$suffix}", "show.{$suffix}", "edit.{$suffix}"];
 
                 foreach($parts as $folder) {
                     $folder = strtolower($folder); // lowercase all folder names
@@ -91,12 +90,9 @@ class MakeView extends Command
 
                 return;
             } else {
-                // we are dealing with at least one folder (the string includes a ".")
-                $parts = explode(".", $viewname);
-
                 // get the last element of the array, which is our blade view file
                 $blade_template = strtolower(end($parts));
-                $blade_file = "{$blade_template}.blade.php";
+                $blade_file = "{$blade_template}.{$suffix}";
 
                 // remove the last element from the array since it is our filename
                 array_pop($parts);
@@ -125,7 +121,7 @@ class MakeView extends Command
         } else {
             if($resourceful) {
                 // we should create a view folder and resourceful view files inside (index, create, show, edit)
-                $resource_files = ['index.blade.php', 'create.blade.php', 'show.blade.php', 'edit.blade.php'];
+                $resource_files = ["index.{$suffix}", "create.{$suffix}", "show.{$suffix}", "edit.{$suffix}"];
 
                 $view_path .= "/{$viewname}";
 
@@ -159,7 +155,7 @@ class MakeView extends Command
                 return;
             } else {
                 // we are dealing with a single/top-level blade file
-                $blade_file = "{$viewname}.blade.php";
+                $blade_file = "{$viewname}.{$suffix}";
                 $full_view_path = "{$view_path}/{$blade_file}";
                 if(!file_exists($full_view_path)) {
                     touch($full_view_path);
@@ -176,19 +172,14 @@ class MakeView extends Command
             return;
         }
 
-        // handle any extends or bootstrap logic
+        // handle any extends or uses logic
         if($viewname == $extends) {
             // we are creating a layout/masterpage, get the requested template and then bail out
-            $html = match($bootstrap) {
-                "v3" => file_get_contents(__DIR__."/shells/bootstrap3.txt"),
-                "v4" => file_get_contents(__DIR__."/shells/bootstrap4.txt"),
-                "v5" => file_get_contents(__DIR__."/shells/bootstrap5.txt"),
+            $html = match($uses) {
+                "bootstrap4" => file_get_contents(__DIR__."/shells/bootstrap4.txt"),
+                "bootstrap5" => file_get_contents(__DIR__."/shells/bootstrap5.txt"),
                 default => file_get_contents(__DIR__."/shells/raw.txt")
             };
-
-            if($bootstrap && in_array($bootstrap, $this->deprecated_bootstrap_versions)) {
-                $this->warn("Bootstrap {$bootstrap} is deprecated, and will be removed soon. Please switch to a newer version as soon as possible.");
-            }
 
             file_put_contents($full_view_path, $html);
 

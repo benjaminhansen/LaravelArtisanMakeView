@@ -15,7 +15,7 @@ Open <code>app/Console/Kernel.php</code> and add <code>BenjaminHansen\LaravelMak
 
 ## Usage
 
-<code>php artisan make:view view.name --extends=layouts.app --bootstrap=bs-version --empty --resourceful</code>
+<code>php artisan make:view view.name --extends=layouts.app --uses=bootstrap4/bootstrap5 --empty --resourceful --suffix=something.php</code>
 
 - <code>resourceful</code> used to create a view directory from <code>view.name</code> and then resourceful view files <code>index.blade.php</code>, <code>create.blade.php</code>, <code>show.blade.php</code>, and <code>edit.blade.php</code>
 
@@ -27,3 +27,5 @@ Open <code>app/Console/Kernel.php</code> and add <code>BenjaminHansen\LaravelMak
 
 - <code>empty</code> option is optional. Creates an empty view file with no layout extension.
     - When using the <code>empty</code> option all other options are ignored.
+
+- <code>suffix</code> is optional if you want to override the default blade.php file suffix with something else.
