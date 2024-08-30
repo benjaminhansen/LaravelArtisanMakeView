@@ -2,6 +2,7 @@
 
 namespace BenjaminHansen\LaravelMakeView;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Console\Command;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\confirm;
@@ -53,6 +54,8 @@ class MakeView extends Command
         $viewname = str_replace(['/'], '.', $viewname);
 
         $extends = $this->option('extends') ?? env('BASE_VIEW');
+        $extends = str_replace(['/'], '.', $extends);
+
         $uses = $this->option('uses');
         $empty = $this->option('empty');
         $resourceful = $this->option('resourceful');
@@ -61,6 +64,11 @@ class MakeView extends Command
         $view_path = base_path('resources/views');
 
         $resource_files = ["index.{$suffix}", "create.{$suffix}", "show.{$suffix}", "edit.{$suffix}"];
+
+        if($extends && !View::exists($extends)) {
+            $this->error("Base view [{$extends}] was not found!");
+            return;
+        }
 
         // handle the actual file creation for the given blade view
         if(str_contains($viewname, '.')) {
@@ -185,7 +193,7 @@ class MakeView extends Command
         }
 
         // handle any extends or uses logic
-        if($viewname == $extends) {
+        if($uses) {
             // we are creating a layout/masterpage, get the requested template and then bail out
             $html = match($uses) {
                 "tailwind" => file_get_contents(__DIR__."/shells/tailwind.txt"),
