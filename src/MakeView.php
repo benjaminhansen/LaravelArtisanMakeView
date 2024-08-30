@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Console\Command;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\select;
 
 class MakeView extends Command implements PromptsForMissingInput
 {
@@ -67,10 +68,14 @@ class MakeView extends Command implements PromptsForMissingInput
             $extends = null;
         }
 
-        $uses = $this->option('uses');
-        $empty = $this->option('empty');
-        $resourceful = $this->option('resourceful');
-        $suffix = $this->option('suffix') ?? 'blade.php';
+        $uses = $this->option('uses') ?? select(label: 'Use a premade base for this view?', options: [
+            'bootstrap5' => 'Bootstrap v5',
+            'tailwind' => 'Tailwind CSS',
+            'raw' => 'Blank Template'
+        ]);
+        $empty = $this->option('empty') ?? confirm(label: 'Create an empty view?', default: false, yes: 'Yes', no: 'No');
+        $resourceful = $this->option('resourceful') ?? confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No');
+        $suffix = $this->option('suffix') ?? text(label: 'Provide a view suffix', placeholder: 'blade.php', default: 'blade.php');
 
         $view_path = base_path('resources/views');
 
