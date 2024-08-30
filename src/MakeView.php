@@ -2,12 +2,13 @@
 
 namespace BenjaminHansen\LaravelMakeView;
 
+use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Support\Facades\View;
 use Illuminate\Console\Command;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\confirm;
 
-class MakeView extends Command
+class MakeView extends Command implements PromptsForMissingInput
 {
     /**
      * The name and signature of the console command.
@@ -38,9 +39,11 @@ class MakeView extends Command
      *
      * @return array
      */
-    protected function promptForMissingArgumentsUsing()
+    protected function promptForMissingArgumentsUsing(): array
     {
-        //
+        return [
+            'viewname' => fn() => text(label: 'What is the name of the view you want to create?', placeholder: 'view.name'),
+        ];
     }
 
     /**
