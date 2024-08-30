@@ -43,7 +43,6 @@ class MakeView extends Command implements PromptsForMissingInput
     {
         return [
             'viewname' => fn() => text(label: 'What is the name of the view you want to create?', placeholder: 'view.name'),
-            'resourceful' => fn() => confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No'),
         ];
     }
 
@@ -57,8 +56,16 @@ class MakeView extends Command implements PromptsForMissingInput
         $viewname = $this->argument('viewname');
         $viewname = str_replace(['/'], '.', $viewname);
 
-        $extends = $this->option('extends') ?? env('BASE_VIEW');
-        $extends = str_replace(['/'], '.', $extends);
+        if(confirm(label: 'Should this view extend a parent view?', default: false, yes: 'Yes', no: 'No')) {
+            $extends = $this->option('extends') ?? env('BASE_VIEW');
+            $extends = str_replace(['/'], '.', $extends);
+
+            if(!$extends) {
+                $extends = text(label: 'What view should this new view extend?', placeholder: 'layouts.app');
+            }
+        } else {
+            $extends = null;
+        }
 
         $uses = $this->option('uses');
         $empty = $this->option('empty');
