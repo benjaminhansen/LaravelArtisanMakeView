@@ -1,6 +1,6 @@
 {
     "name": "benjaminhansen/laravel-artisan-make-view",
-    "description": "Laravel Artisan command to create Blade views",
+    "description": "Laravel Artisan command with extended options to create Blade views",
     "license": "MIT",
     "authors": [
         {
@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "laravel/helpers": "^1.7"
+        "laravel/helpers": "^1.7",
+        "laravel/prompts": "^0.1.25"
     },
     "autoload": {
         "psr-4": {

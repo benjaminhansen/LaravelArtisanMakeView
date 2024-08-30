@@ -3,6 +3,8 @@
 namespace BenjaminHansen\LaravelMakeView;
 
 use Illuminate\Console\Command;
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\confirm;
 
 class MakeView extends Command
 {
@@ -11,7 +13,7 @@ class MakeView extends Command
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--extends=} {--uses=} {--empty} {--resourceful} {--suffix=}";
+    protected $signature = "make:view {viewname} {--e|extends=} {--u|uses=} {--E|empty} {--r|resourceful} {--s|suffix=}";
 
     /**
      * The console command description.
@@ -31,6 +33,16 @@ class MakeView extends Command
     }
 
     /**
+     * Prompt for missing input arguments using the returned questions.
+     *
+     * @return array
+     */
+    protected function promptForMissingArgumentsUsing()
+    {
+        //
+    }
+
+    /**
      * Execute the console command.
      *
      * @return mixed
@@ -38,6 +50,8 @@ class MakeView extends Command
     public function handle()
     {
         $viewname = $this->argument('viewname');
+        $viewname = str_replace(['/'], '.', $viewname);
+
         $extends = $this->option('extends') ?? env('BASE_VIEW');
         $uses = $this->option('uses');
         $empty = $this->option('empty');
@@ -46,14 +60,14 @@ class MakeView extends Command
 
         $view_path = base_path('resources/views');
 
+        $resource_files = ["index.{$suffix}", "create.{$suffix}", "show.{$suffix}", "edit.{$suffix}"];
+
         // handle the actual file creation for the given blade view
         if(str_contains($viewname, '.')) {
-            $parts = explode(".", $viewname);
+            $parts = explode('.', $viewname);
 
             if($resourceful) {
                 // we should create a view folder and resourceful view files inside (index, create, show, edit)
-                $resource_files = ["index.{$suffix}", "create.{$suffix}", "show.{$suffix}", "edit.{$suffix}"];
-
                 foreach($parts as $folder) {
                     $folder = strtolower($folder); // lowercase all folder names
                     $folder = str_slug($folder); // slugify all folder names to make sure they are clean
@@ -121,8 +135,6 @@ class MakeView extends Command
         } else {
             if($resourceful) {
                 // we should create a view folder and resourceful view files inside (index, create, show, edit)
-                $resource_files = ["index.{$suffix}", "create.{$suffix}", "show.{$suffix}", "edit.{$suffix}"];
-
                 $view_path .= "/{$viewname}";
 
                 if(!file_exists($view_path)) {
@@ -176,7 +188,7 @@ class MakeView extends Command
         if($viewname == $extends) {
             // we are creating a layout/masterpage, get the requested template and then bail out
             $html = match($uses) {
-                "bootstrap4" => file_get_contents(__DIR__."/shells/bootstrap4.txt"),
+                "tailwind" => file_get_contents(__DIR__."/shells/tailwind.txt"),
                 "bootstrap5" => file_get_contents(__DIR__."/shells/bootstrap5.txt"),
                 default => file_get_contents(__DIR__."/shells/raw.txt")
             };
