@@ -43,6 +43,7 @@ class MakeView extends Command implements PromptsForMissingInput
     {
         return [
             'viewname' => fn() => text(label: 'What is the name of the view you want to create?', placeholder: 'view.name'),
+            'resourceful' => fn() => confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No'),
         ];
     }
 
