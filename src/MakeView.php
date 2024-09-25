@@ -16,7 +16,7 @@ class MakeView extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--e|extends=} {--u|uses=} {--E|empty} {--r|resourceful} {--s|suffix=}";
+    protected $signature = "make:view {viewname} {--v|volt} {--e|extends=} {--u|uses=} {--E|empty} {--r|resourceful} {--s|suffix=}";
 
     /**
      * The console command description.
@@ -57,6 +57,8 @@ class MakeView extends Command implements PromptsForMissingInput
         $viewname = $this->argument('viewname');
         $viewname = str_replace(['/'], '.', $viewname);
 
+        $volt = $this->option('volt');
+
         if(confirm(label: 'Should this view extend a parent view?', default: false, yes: 'Yes', no: 'No')) {
             $extends = $this->option('extends') ?? env('BASE_VIEW');
             $extends = str_replace(['/'], '.', $extends);
@@ -68,17 +70,19 @@ class MakeView extends Command implements PromptsForMissingInput
             $extends = null;
         }
 
-        $uses = $this->option('uses') ?? select(label: 'Use a premade base for this view?', options: [
-            'volt' => 'Livewire Volt',
-            'bootstrap5' => 'Bootstrap v5',
-            'tailwind' => 'Tailwind CSS',
-            'raw' => 'Blank Template'
-        ]);
-        $empty = $this->option('empty') ?? confirm(label: 'Create an empty view?', default: false, yes: 'Yes', no: 'No');
-        $resourceful = $this->option('resourceful') ?? confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No');
+        if(!$volt) {
+            $uses = $this->option('uses') ?? select(label: 'Use a premade base for this view?', options: [
+                'bootstrap5' => 'Bootstrap v5',
+                'tailwind' => 'Tailwind CSS',
+                'raw' => 'Blank Template'
+            ]);
+            $empty = $this->option('empty') ?? confirm(label: 'Create an empty view?', default: false, yes: 'Yes', no: 'No');
+            $resourceful = $this->option('resourceful') ?? confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No');
+        }
+
         $suffix = $this->option('suffix') ?? text(label: 'Provide a view suffix', placeholder: 'blade.php', default: 'blade.php');
 
-        if($uses == 'volt') {
+        if($volt) {
             $view_uri = 'resources/views/livewire';
         } else {
             $view_uri = 'resources/views';
@@ -208,6 +212,15 @@ class MakeView extends Command implements PromptsForMissingInput
             }
         }
 
+        if($volt) {
+            $contents = file_get_contents(__DIR__."/shells/livewire-volt.txt");
+            file_put_contents($full_view_path, $contents);
+
+            $this->info("New Livewire Volt component [$viewname] created");
+
+            return;
+        }
+
         if($empty || !$extends) {
             // if we are creating an empty view file, bail out here
             $this->info("Empty view [$viewname] created");
@@ -218,7 +231,6 @@ class MakeView extends Command implements PromptsForMissingInput
         if($uses) {
             // we are creating a layout/masterpage, get the requested template and then bail out
             $html = match($uses) {
-                "volt" => file_get_contents(__DIR__."/shells/livewire-volt.txt"),
                 "tailwind" => file_get_contents(__DIR__."/shells/tailwind.txt"),
                 "bootstrap5" => file_get_contents(__DIR__."/shells/bootstrap5.txt"),
                 default => file_get_contents(__DIR__."/shells/raw.txt")
