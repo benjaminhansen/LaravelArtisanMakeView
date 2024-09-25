@@ -69,6 +69,7 @@ class MakeView extends Command implements PromptsForMissingInput
         }
 
         $uses = $this->option('uses') ?? select(label: 'Use a premade base for this view?', options: [
+            'volt' => 'Livewire Volt',
             'bootstrap5' => 'Bootstrap v5',
             'tailwind' => 'Tailwind CSS',
             'raw' => 'Blank Template'
@@ -212,6 +213,7 @@ class MakeView extends Command implements PromptsForMissingInput
         if($uses) {
             // we are creating a layout/masterpage, get the requested template and then bail out
             $html = match($uses) {
+                "volt" => file_get_contents(__DIR__."/shells/livewire-volt.txt"),
                 "tailwind" => file_get_contents(__DIR__."/shells/tailwind.txt"),
                 "bootstrap5" => file_get_contents(__DIR__."/shells/bootstrap5.txt"),
                 default => file_get_contents(__DIR__."/shells/raw.txt")
