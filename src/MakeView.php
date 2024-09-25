@@ -78,7 +78,12 @@ class MakeView extends Command implements PromptsForMissingInput
         $resourceful = $this->option('resourceful') ?? confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No');
         $suffix = $this->option('suffix') ?? text(label: 'Provide a view suffix', placeholder: 'blade.php', default: 'blade.php');
 
-        $view_path = base_path('resources/views');
+        if($uses == 'volt') {
+            $view_uri = 'resources/views/livewire';
+        } else {
+            $view_uri = 'resources/views';
+        }
+        $view_path = base_path($view_uri);
 
         $resource_files = ["index.{$suffix}", "create.{$suffix}", "show.{$suffix}", "edit.{$suffix}"];
 
