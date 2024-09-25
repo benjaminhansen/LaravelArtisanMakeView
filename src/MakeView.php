@@ -74,20 +74,26 @@ class MakeView extends Command implements PromptsForMissingInput
             }
         }
 
-        if(!$volt) {
-            $uses = $this->option('uses') ?? select(label: 'Use a premade base for this view?', options: [
-                'bootstrap5' => 'Bootstrap v5',
-                'tailwind' => 'Tailwind CSS',
-                'raw' => 'Blank Template'
-            ]);
-            $empty = $this->option('empty') ?? confirm(label: 'Create an empty view?', default: false, yes: 'Yes', no: 'No');
-            $resourceful = $this->option('resourceful') ?? confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No');
-            $suffix = $this->option('suffix') ?? text(label: 'Provide a view suffix', placeholder: 'blade.php', default: 'blade.php');
-        } else {
+        if($volt) {
             $resourceful = false;
             $empty = false;
             $uses = null;
             $suffix = 'blade.php';
+        } else {
+            $empty = $this->option('empty') ?? confirm(label: 'Create an empty view?', default: false, yes: 'Yes', no: 'No');
+            if($empty) {
+                $uses = null;
+                $resourceful = false;
+            } else {
+                $uses = $this->option('uses') ?? select(label: 'Use a premade base for this view?', options: [
+                    'bootstrap5' => 'Bootstrap v5',
+                    'tailwind' => 'Tailwind CSS',
+                    'raw' => 'Blank Template'
+                ]);
+                $resourceful = $this->option('resourceful') ?? confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No');
+            }
+
+            $suffix = $this->option('suffix') ?? text(label: 'Provide a view suffix', placeholder: 'blade.php', default: 'blade.php');
         }
 
         if($volt) {
