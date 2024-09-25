@@ -59,15 +59,19 @@ class MakeView extends Command implements PromptsForMissingInput
 
         $volt = $this->option('volt');
 
-        if(confirm(label: 'Should this view extend a parent view?', default: false, yes: 'Yes', no: 'No')) {
-            $extends = $this->option('extends') ?? env('BASE_VIEW');
-            $extends = str_replace(['/'], '.', $extends);
-
-            if(!$extends) {
-                $extends = text(label: 'What view should this new view extend?', placeholder: 'layouts.app');
-            }
-        } else {
+        if($volt) {
             $extends = null;
+        } else {
+            if(confirm(label: 'Should this view extend a parent view?', default: false, yes: 'Yes', no: 'No')) {
+                $extends = $this->option('extends') ?? env('BASE_VIEW');
+                $extends = str_replace(['/'], '.', $extends);
+
+                if(!$extends) {
+                    $extends = text(label: 'What view should this new view extend?', placeholder: 'layouts.app');
+                }
+            } else {
+                $extends = null;
+            }
         }
 
         if(!$volt) {
