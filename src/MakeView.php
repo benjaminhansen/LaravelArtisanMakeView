@@ -16,7 +16,7 @@ class MakeView extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = "make:view {viewname} {--V|volt} {--e|extends=} {--u|uses=} {--E|empty} {--r|resourceful} {--s|suffix=}";
+    protected $signature = "make:view {viewname} {--volt} {--e|extends=} {--u|uses=} {--E|empty} {--r|resourceful} {--s|suffix=}";
 
     /**
      * The console command description.
