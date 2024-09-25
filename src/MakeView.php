@@ -78,9 +78,13 @@ class MakeView extends Command implements PromptsForMissingInput
             ]);
             $empty = $this->option('empty') ?? confirm(label: 'Create an empty view?', default: false, yes: 'Yes', no: 'No');
             $resourceful = $this->option('resourceful') ?? confirm(label: 'Create a resourceful set of child views?', default: false, yes: 'Yes', no: 'No');
+            $suffix = $this->option('suffix') ?? text(label: 'Provide a view suffix', placeholder: 'blade.php', default: 'blade.php');
+        } else {
+            $resourceful = false;
+            $empty = false;
+            $uses = null;
+            $suffix = 'blade.php';
         }
-
-        $suffix = $this->option('suffix') ?? text(label: 'Provide a view suffix', placeholder: 'blade.php', default: 'blade.php');
 
         if($volt) {
             $view_uri = 'resources/views/livewire';
